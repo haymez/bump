@@ -15,13 +15,16 @@ impl Version {
             Err(..) => panic!("Couldn't find VERSION file"),
         };
         let mut content = String::new();
-        file.read_to_string(&mut content).unwrap();
+        match file.read_to_string(&mut content) {
+            Ok(_) => true,
+            Err(..) => panic!("Error reading file."),
+        };
         let v: Vec<&str> = content.split('.').collect();
 
         Version {
-            major: v[0].parse::<i32>().unwrap(),
-            minor: v[1].parse::<i32>().unwrap(),
-            patch: v[2].parse::<i32>().unwrap()
+            major: v[0].trim().parse::<i32>().unwrap(),
+            minor: v[1].trim().parse::<i32>().unwrap(),
+            patch: v[2].trim().parse::<i32>().unwrap()
         }
     }
 
