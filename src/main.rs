@@ -1,32 +1,25 @@
-use std::fs::File;
-use  std::io::Read;
-
-struct Version {
-    major: i32,
-    minor: i32,
-    patch: i32,
-}
-
-impl Version {
-    fn new(&self) -> Version {
-        let mut file = match File::open("VERSION") {
-            Ok(file) => file,
-            Err(..) => panic!("Couldn't find VERSION file"),
-        };
-        let mut content = String::new();
-        file.read_to_string(&mut content).unwrap();
-        let mut v: Vec<&str> = content.Split('.').collect();
-        let test = Version(v[0], v[1], v[2]);
-    };
-}
+mod version;
+use version::Version;
+use std::env::args;
+use std::convert::AsRef;
 
 fn main() {
-    let mut file = match File::open("VERSION") {
-        Ok(file) => file,
-        Err(..) => panic!("Couldn't find VERSION file"),
-    };
-    let mut content = String::new();
-    let x = file.read_to_string(&mut content).unwrap();
-    
-    println!("contents: {}", content);
+    let mut version = Version::new();
+    let v: Vec<String> = args().collect();
+    println!("{}", v.len());
+    if v.len() < 2 {
+        panic!("Please specify which part of the VERSION you would like to bump. (major/minor/patch)")
+    }
+    else {
+        let first = v[1].to_string();
+        
+        match first.as_ref() {
+            "major" => version.bump_major(),
+            "minor" => version.bump_minor(),
+            "patch" => version.bump_patch(),
+            _       => panic!("Not a recognized option. Please use 'major', 'minor', or 'patch'.")
+        };
+
+        println!("major: {}, minor: {}, patch: {}", version.major, version.minor, version.patch);
+    }
 }
