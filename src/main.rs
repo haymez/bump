@@ -6,7 +6,6 @@ use std::convert::AsRef;
 fn main() {
     let mut version = Version::new();
     let v: Vec<String> = args().collect();
-    println!("{}", v.len());
     if v.len() < 2 {
         panic!("Please specify which part of the VERSION you would like to bump. (major/minor/patch)")
     }
